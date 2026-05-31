@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebCodes34 - Premium HTML Templates</title>
+    
+    <!-- [কনসোল ওয়ার্নিং ফিল্টার]: Tailwind এবং Firebase-এর অপ্রয়োজনীয় ওয়ার্নিংগুলো কনসোল থেকে লুকিয়ে ফেলার জন্য -->
+    <script>
+        (function() {
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                if (args[0] && typeof args[0] === 'string') {
+                    // Tailwind CDN production warning সাইলেন্স করা হলো
+                    if (args[0].includes('cdn.tailwindcss.com')) return;
+                    // Firebase Firestore persistence deprecation warning সাইলেন্স করা হলো
+                    if (args[0].includes('enableMultiTabIndexedDbPersistence') || args[0].includes('FirestoreSettings.cache')) return;
+                }
+                originalWarn.apply(console, args);
+            };
+        })();
+    </script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (Compatibility Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+        }
+        /* স্ক্রলবার হাইড করার জন্য কাস্টম CSS */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* --- লাইট থিমের কাস্টম স্টাইলস --- */
+        body.theme-light {
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        body.theme-light header {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-color: #e2e8f0;
+        }
+        body.theme-light #searchInput {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+            color: #1e293b;
+        }
+        body.theme-light #searchInput::placeholder {
+            color: #94a3b8;
+        }
+        body.theme-light h2, body.theme-light h3 {
+            color: #0f172a;
+        }
+        body.theme-light p {
+            color: #475569;
+        }
+        body.theme-light footer {
+            background-color: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #64748b;
+        }
+        body.theme-light .bg-slate-900\/50 {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-color: #e2e8f0;
+        }
+        body.theme-light .bg-slate-950 {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        body.theme-light #themeToggleDesktop, 
+        body.theme-light #themeToggleMobile {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+        }
+        body.theme-light .bg-slate-950\/85 {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-color: #cbd5e1;
+        }
+        body.theme-light .bg-emerald-500\/10 {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #047857;
+        }
+        body.theme-light .text-emerald-400 {
+            color: #047857;
+        }
+        body.theme-light .text-indigo-400 {
+            color: #4f46e5;
+        }
+        
+        /* অফলাইন ওভারলে লাইট থিম স্টাইল */
+        body.theme-light #offlineOverlay {
+            background-color: #f8fafc;
+        }
+        body.theme-light #offlineOverlay h1 {
+            color: #0f172a;
+        }
+        body.theme-light #offlineOverlay p {
+            color: #475569;
+        }
+        
+        /* ট্রানজিশন ইফেক্ট */
+        body, header, input, footer, .theme-trans-element {
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen flex flex-col justify-between">
+
+    <!-- Offline Blocking Overlay (ইন্টারনেট না থাকলে এই স্ক্রিনটি পুরো পেজ ব্লক করে এরর দেখাবে) -->
+    <div id="offlineOverlay" class="fixed inset-0 z-[100] hidden flex flex-col items-center justify-center bg-[#0f172a] text-center p-6 theme-trans-element">
+        <div class="max-w-md space-y-4">
+            <div class="text-red-500 flex justify-center">
+                <svg class="w-16 h-16 animate-pulse" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.284 16.284A3 3 0 0012 17a3 3 0 003.716-.716m-7.432-3.568a6 6 0 017.432 0M5.142 9.142a9 9 0 0113.716 0M1.936 6.136A12 12 0 0121.063 6.14M22.5 22.5L1.5 1.5"/>
+                </svg>
+            </div>
+            <h1 class="text-xl font-bold text-white">No Internet Connection</h1>
+            <p class="text-xs text-slate-400">Please connect to the internet to access WebCodes34.</p>
+            <button onclick="window.location.reload()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-6 rounded-lg text-xs transition-colors">
+                Retry Connection
+            </button>
+        </div>
+    </div>
+
+    <!-- Header / Navigation Bar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row items-center justify-between gap-3">
+            
+            <!-- Left Corner: WebCodes34 & Right Corner on Mobile: Theme Switcher -->
+            <div class="w-full sm:w-auto flex items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+                        WebCodes34
+                    </span>
+                    <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-full font-medium border border-indigo-500/20">
+                        Free
+                    </span>
+                </div>
+
+                <!-- Theme Toggle -->
+                <div class="sm:hidden">
+                    <button id="themeToggleMobile" onclick="toggleTheme()" class="flex items-center gap-1 bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-md hover:border-slate-700 transition-colors">
+                        <span class="theme-dark-label text-indigo-400 flex items-center gap-1 text-[10px] font-medium">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                            Dark
+                        </span>
+                        <span class="theme-light-label hidden text-amber-600 flex items-center gap-1 text-[10px] font-medium">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+                            Light
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Center: Search Bar -->
+            <div class="relative w-full sm:w-80">
+                <input type="text" id="searchInput" oninput="filterItems()" placeholder="Search template..." 
+                    class="w-full bg-slate-950 border border-slate-800 rounded-lg py-1.5 pl-9 pr-3 text-xs text-slate-300 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
+                <div class="absolute left-3 top-2.5 text-slate-500">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+
+            <!-- Right Corner: Theme Switcher -->
+            <div class="hidden sm:block">
+                <button id="themeToggleDesktop" onclick="toggleTheme()" class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg hover:border-slate-700 transition-colors">
+                    <span class="theme-dark-label text-indigo-400 flex items-center gap-1 text-[11px] font-medium">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        Dark
+                    </span>
+                    <span class="theme-light-label hidden text-amber-600 flex items-center gap-1 text-[11px] font-medium">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path></svg>
+                        Light
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+        
+        <!-- Recently Uploaded Section -->
+        <section id="recentSection" class="mb-8 hidden">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <h2 class="text-base font-semibold tracking-tight text-white">Recently Uploaded 👇</h2>
+            </div>
+            <div id="recentContainer" class="flex overflow-x-auto gap-3 sm:gap-4 pb-2 scrollbar-none">
+                <!-- Dynamic Content -->
+            </div>
+        </section>
+
+        <!-- All HTML Templates 👇 Section -->
+        <section>
+            <h2 class="text-base font-semibold tracking-tight text-white mb-4">All HTML Templates 👇</h2>
+            <div id="allContainer" class="grid grid-cols-3 gap-2.5 sm:gap-4">
+                <!-- Dynamic Content -->
+            </div>
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <p class="text-slate-500 text-sm">No templates found.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-5 text-center text-xs text-slate-600">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col items-center gap-3">
+            <p class="theme-trans-element">© 2026 WebCodes34. Made With Koushik</p>
+            
+            <!-- Social Links -->
+            <div class="flex items-center gap-4 mt-1">
+                <!-- Telegram Symbol -->
+                <a href="https://telegram.me/webcodes34" target="_blank" rel="noopener noreferrer" 
+                   class="text-slate-500 hover:text-sky-400 transition-colors duration-250" title="Join Telegram">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.04-.74 4.07-1.77 6.78-2.93 8.14-3.47 3.87-1.53 4.68-1.8 5.21-1.8.11 0 .38.03.55.17.14.11.18.27.2.38-.01.07.01.25 0 .35z"/>
+                    </svg>
+                </a>
+                
+                <!-- YouTube Symbol -->
+                <a href="https://youtube.com/@webcodes34?si=YcN4RhEfm6QquMHu" target="_blank" rel="noopener noreferrer" 
+                   class="text-slate-500 hover:text-red-500 transition-colors duration-250" title="Subscribe YouTube">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.507a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.507 9.388.507 9.388.507s7.517 0 9.388-.507a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script and Firebase Logic -->
+    <script>
+        // ইন্টারনেট কানেকশন চেক করার কোর মেকানিজম (পেজ ওপেন হওয়া মাত্রই জিরো ডিলেতে চেক হবে)
+        function checkInternetConnection() {
+            const overlay = document.getElementById('offlineOverlay');
+            if (overlay) {
+                if (!navigator.onLine) {
+                    overlay.classList.remove('hidden');
+                } else {
+                    overlay.classList.add('hidden');
+                }
+            }
+        }
+
+        // ইন্টারনেট কানেকশন লাইভ মনিটর করার জন্য ইভেন্ট লিসেনার
+        window.addEventListener('online', checkInternetConnection);
+        window.addEventListener('offline', checkInternetConnection);
+
+        // স্ক্রিপ্ট এক্সিকিউট হওয়া মাত্রই কানেকশন চেক কল করা হলো
+        checkInternetConnection();
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW0WZCzOhkI4FRE-XOAqbF5jyCdzPDsz8",
+            authDomain: "webcods34.firebaseapp.com",
+            databaseURL: "https://webcods34-default-rtdb.firebaseio.com",
+            projectId: "webcods34",
+            storageBucket: "webcods34.firebasestorage.app",
+            messagingSenderId: "1096905551040",
+            appId: "1:1096905551040:web:854e1e076af7cc730e1125"
+        };
+
+        // Firebase Initialization
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // অফলাইন পারসিস্টেন্স অ্যাক্টিভেশন (ডাটা ক্যাশিং)
+        db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+            console.warn("Firestore Persistence failed or unsupported: ", err.code);
+        });
+
+        let allTemplates = [];
+
+        // Safe LocalStorage Wrapper
+        const storage = {
+            get: (key) => {
+                try { return localStorage.getItem(key); } catch (e) { return null; }
+            },
+            set: (key, val) => {
+                try { localStorage.setItem(key, val); } catch (e) {}
+            }
+        };
+
+        // ডার্ক ও লাইট থিম টগল সিস্টেম
+        function toggleTheme() {
+            const body = document.body;
+            const isLight = body.classList.toggle('theme-light');
+            
+            storage.set('webcodes34_theme', isLight ? 'light' : 'dark');
+            updateThemeUI(isLight);
+        }
+
+        // থিম পরিবর্তনের সময় ফুটার এবং অন্যান্য উপাদানের ব্যাকগ্রাউন্ড ঠিক রাখার জন্য
+        function updateThemeUI(isLight) {
+            const darkLabels = document.querySelectorAll('.theme-dark-label');
+            const lightLabels = document.querySelectorAll('.theme-light-label');
+            
+            if (isLight) {
+                darkLabels.forEach(el => el.classList.add('hidden'));
+                lightLabels.forEach(el => el.classList.remove('hidden'));
+            } else {
+                darkLabels.forEach(el => el.classList.remove('hidden'));
+                lightLabels.forEach(el => el.classList.add('hidden'));
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = storage.get('webcodes34_theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('theme-light');
+                updateThemeUI(true);
+            } else {
+                updateThemeUI(false);
+            }
+        }
+
+        // সুরক্ষিত ডেট পার্সিং
+        function safeParseDate(dateInput) {
+            if (!dateInput) return new Date();
+            if (dateInput && typeof dateInput.toDate === 'function') {
+                return dateInput.toDate();
+            }
+            const parsed = new Date(dateInput);
+            return isNaN(parsed.getTime()) ? new Date() : parsed;
+        }
+
+        // আপলোডের সময় গণনাকারী
+        function timeAgo(dateString) {
+            const now = new Date();
+            const uploaded = safeParseDate(dateString);
+            const diffMs = now - uploaded;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            
+            if (diffMins < 1) {
+                return "Just now";
+            }
+            if (diffMins < 60) {
+                return `${diffMins}m ago`;
+            }
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) {
+                return `${diffHours}h ago`;
+            }
+            const diffDays = Math.floor(diffHours / 24);
+            return `${diffDays}d ago`;
+        }
+
+        // রিয়েল-টাইমে ফাস্ট সিঙ্ক
+        function syncTemplates() {
+            db.collection("templates").orderBy("uploadedAt", "desc").onSnapshot((snapshot) => {
+                allTemplates = [];
+                snapshot.forEach((doc) => {
+                    allTemplates.push({ id: doc.id, ...doc.data() });
+                });
+                renderTemplates();
+            }, (error) => {
+                console.error("Error fetching templates: ", error);
+            });
+        }
+
+        // ইমেজ হ্যান্ডলার
+        function handleImageError(img) {
+            img.onerror = null;
+            img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' stroke-width='0' height='100' fill='%231e293b'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='8' fill='%2364748b'>No Preview Available</text></svg>";
+        }
+
+        // সর্বোচ্চ ফাস্ট রেন্ডারিং ইঞ্জিন
+        function renderTemplates() {
+            const recentContainer = document.getElementById('recentContainer');
+            const allContainer = document.getElementById('allContainer');
+            const recentSection = document.getElementById('recentSection');
+            const emptyState = document.getElementById('emptyState');
+
+            if (allTemplates.length === 0) {
+                recentContainer.innerHTML = '';
+                allContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                recentSection.classList.add('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            const oneDayInMs = 24 * 60 * 60 * 1000;
+            const now = Date.now();
+            let hasRecent = false;
+
+            let recentHTMLBuilder = '';
+            let allHTMLBuilder = '';
+
+            allTemplates.forEach(item => {
+                const uploadedTime = safeParseDate(item.uploadedAt).getTime();
+                const isRecent = (now - uploadedTime) <= oneDayInMs;
+                const timeStr = timeAgo(item.uploadedAt);
+                const desc = item.description || 'No description available.';
+
+                const cardHTML = `
+                    <div class="theme-trans-element bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl overflow-hidden group hover:border-indigo-500/50 transition-all duration-300 flex flex-col h-full">
+                        <div class="aspect-[16/9] w-full bg-slate-950 overflow-hidden relative">
+                            <img src="${item.image}" alt="${item.title}" 
+                                 loading="lazy" decoding="async"
+                                 onerror="handleImageError(this)"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-1 right-1 sm:top-2 sm:right-2">
+                                <span class="bg-slate-950/85 backdrop-blur text-indigo-400 text-[8px] sm:text-[10px] font-semibold px-1 sm:px-2 py-0.5 rounded border border-slate-800">
+                                    HTML
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-2.5 sm:p-4 flex flex-col flex-grow justify-between">
+                            <div>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                                    <h3 class="text-white font-semibold text-[11px] sm:text-sm group-hover:text-indigo-400 transition-colors line-clamp-1">${item.title}</h3>
+                                    <span class="text-emerald-400 text-[8px] sm:text-[10px] font-medium flex-shrink-0 bg-emerald-500/10 px-1 sm:px-1.5 py-0.5 rounded border border-emerald-500/15 flex items-center gap-0.5 sm:gap-1 w-fit">
+                                        <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
+                                        ${timeStr}
+                                    </span>
+                                </div>
+                                <p class="text-slate-400 text-[9px] sm:text-[11px] line-clamp-1 sm:line-clamp-2 mb-2 sm:mb-3 leading-relaxed">${desc}</p>
+                            </div>
+                            <button onclick="downloadCode('${item.id}')" 
+                                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-[9px] sm:text-xs py-1 sm:py-2 px-2 rounded transition-all duration-200 flex items-center justify-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                allHTMLBuilder += cardHTML;
+
+                if (isRecent) {
+                    const recentCardHTML = cardHTML.replace(
+                        'class="theme-trans-element bg-slate-900/50',
+                        'class="theme-trans-element w-[170px] sm:w-[260px] flex-shrink-0 bg-slate-900/50'
+                    );
+                    recentHTMLBuilder += recentCardHTML;
+                    hasRecent = true;
+                }
+            });
+
+            allContainer.innerHTML = allHTMLBuilder;
+            recentContainer.innerHTML = recentHTMLBuilder;
+
+            if (hasRecent) {
+                recentSection.classList.remove('hidden');
+            } else {
+                recentSection.classList.add('hidden');
+            }
+        }
+
+        // ইনস্ট্যান্ট ইনপুট ফিল্টারিং
+        function filterItems() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            if (query === "") {
+                renderTemplates();
+                return;
+            }
+
+            const filtered = allTemplates.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                (item.description && item.description.toLowerCase().includes(query))
+            );
+
+            const allContainer = document.getElementById('allContainer');
+            const recentSection = document.getElementById('recentSection');
+            const emptyState = document.getElementById('emptyState');
+
+            recentSection.classList.add('hidden');
+
+            if (filtered.length === 0) {
+                allContainer.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            let filteredHTMLBuilder = '';
+
+            filtered.forEach(item => {
+                const timeStr = timeAgo(item.uploadedAt);
+                const desc = item.description || 'No description available.';
+
+                filteredHTMLBuilder += `
+                    <div class="theme-trans-element bg-slate-900/50 border border-slate-800 rounded-lg sm:rounded-xl overflow-hidden group hover:border-indigo-500/50 transition-all duration-300 flex flex-col h-full">
+                        <div class="aspect-[16/9] w-full bg-slate-950 overflow-hidden relative">
+                            <img src="${item.image}" alt="${item.title}" 
+                                 loading="lazy" decoding="async"
+                                 onerror="handleImageError(this)"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-1 right-1 sm:top-2 sm:right-2">
+                                <span class="bg-slate-950/85 backdrop-blur text-indigo-400 text-[8px] sm:text-[10px] font-semibold px-1 sm:px-2 py-0.5 rounded border border-slate-800">HTML</span>
+                            </div>
+                        </div>
+                        <div class="p-2.5 sm:p-4 flex flex-col flex-grow justify-between">
+                            <div>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
+                                    <h3 class="text-white font-semibold text-[11px] sm:text-sm group-hover:text-indigo-400 transition-colors line-clamp-1">${item.title}</h3>
+                                    <span class="text-emerald-400 text-[8px] sm:text-[10px] font-medium flex-shrink-0 bg-emerald-500/10 px-1 sm:px-1.5 py-0.5 rounded border border-emerald-500/15 flex items-center gap-0.5 sm:gap-1 w-fit">
+                                        <span class="w-1 h-1 rounded-full bg-emerald-500"></span>
+                                        ${timeStr}
+                                    </span>
+                                </div>
+                                <p class="text-slate-400 text-[9px] sm:text-[11px] line-clamp-1 sm:line-clamp-2 mb-2 sm:mb-3 leading-relaxed">${desc}</p>
+                            </div>
+                            <button onclick="downloadCode('${item.id}')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-[9px] sm:text-xs py-1 sm:py-2 px-2 rounded transition-all duration-200 flex items-center justify-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            allContainer.innerHTML = filteredHTMLBuilder;
+        }
+
+        // ডাউনলোড মেথড
+        function downloadCode(id) {
+            const item = allTemplates.find(t => t.id === id);
+            if (!item) return;
+
+            const codeContent = item.code || '';
+            const blob = new Blob([codeContent], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${item.title.replace(/[^a-zA-Z0-9]/g, '_')}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ব্লার ইভেন্ট
+        document.addEventListener('click', function(event) {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput && event.target !== searchInput) {
+                searchInput.blur();
+            }
+        });
+
+        // ব্যাকগ্রাউন্ডে থিম ও ডাটা ফেচ ট্রিগার
+        initTheme();
+        syncTemplates();
+    </script>
+</body>
+</html>
